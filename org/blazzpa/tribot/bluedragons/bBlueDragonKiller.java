@@ -30,7 +30,6 @@ public class bBlueDragonKiller extends Script {
 
     @Override
     public void run() {
-        https://googel.co.uk
         while (!terminate) {
             if (!completedStartup) {
                 if (!startupCheck()) {
