@@ -1,36 +1,41 @@
-package org.blazzpa.tribot.bluedragons.actions.impl;
+package scripts.org.blazzpa.tribot.bluedragons.actions.impl;
 
-import org.blazzpa.tribot.bluedragons.actions.Task;
-import org.blazzpa.tribot.bluedragons.bBlueDragonKiller;
 import org.tribot.api.Timing;
-import org.tribot.api.rs3.Skills;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Player;
+import org.tribot.api2007.types.RSItem;
+import scripts.org.blazzpa.tribot.bluedragons.actions.Task;
+import scripts.org.blazzpa.tribot.bluedragons.bBlueDragonKiller;
 
 public class Teleport extends Task {
 
-    public Teleport(bBlueDragonKiller instance) {
+    public Teleport(final bBlueDragonKiller instance) {
         super(instance);
     }
 
     @Override
     public boolean validate() {
-        return (Inventory.isFull() || (Inventory.getCount(getInstance().getSettings().selectedFoodID) == 0 &&
-                Skills.getActualLevel(Skills.SKILLS.HITPOINTS) < getInstance().getSettings().minimumHitpoints)) &&
-                Player.getPosition().getY() > 9000 && Inventory.getCount(getInstance().getConstants().faladorTeletabID) > 0;
+        return (Inventory.isFull() || (Inventory.getCount(instance.settings.selectedFoodID) == 0 &&
+                !instance.methods.hasEnoughHealth())) &&
+                instance.methods.inDragonArea() && Inventory.getCount(instance.constants.faladorTeletabID) > 0;
     }
 
     @Override
     public void execute() {
-        if (Inventory.find(getInstance().getConstants().faladorTeletabID)[0].click("Break")) {
-            if (Timing.waitCondition(new Condition() {
-                @Override
-                public boolean active() {
-                    return Player.getAnimation() == 4069 || Player.getAnimation() == 4071;
+        final RSItem[] teletab = Inventory.find(instance.constants.faladorTeletabID);
+        if (teletab.length > 0) {
+            if (teletab[0] != null) {
+                if (Inventory.find(instance.constants.faladorTeletabID)[0].click("Break")) {
+                    if (Timing.waitCondition(new Condition() {
+                        @Override
+                        public boolean active() {
+                            return Player.getAnimation() == 4069 || Player.getAnimation() == 4071;
+                        }
+                    }, 5000)) {
+                        instance.print("Teleportation successful.");
+                    }
                 }
-            }, 2000)) {
-                getInstance().println("Teleportation successful.");
             }
         }
     }

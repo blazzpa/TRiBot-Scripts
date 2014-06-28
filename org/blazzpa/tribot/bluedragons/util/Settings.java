@@ -1,4 +1,4 @@
-package org.blazzpa.tribot.bluedragons.util;
+package scripts.org.blazzpa.tribot.bluedragons.util;
 
 public class Settings {
 
@@ -7,4 +7,5 @@ public class Settings {
     public int minimumHitpoints = 20;
 
     public int selectedFoodID = 379;
+
 }

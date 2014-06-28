@@ -1,18 +1,18 @@
-package org.blazzpa.tribot.bluedragons.actions;
+package scripts.org.blazzpa.tribot.bluedragons.actions;
 
-import org.blazzpa.tribot.bluedragons.bBlueDragonKiller;
+import scripts.org.blazzpa.tribot.bluedragons.bBlueDragonKiller;
 
 public abstract class Task {
 
-    private bBlueDragonKiller instance;
+    protected final bBlueDragonKiller instance;
+
+    protected Task(final bBlueDragonKiller instance) {
+        this.instance = instance;
+    }
 
     public abstract boolean validate();
 
     public abstract void execute();
-
-    public Task(bBlueDragonKiller instance) {
-        this.instance = instance;
-    }
 
     public bBlueDragonKiller getInstance() {
         return instance;

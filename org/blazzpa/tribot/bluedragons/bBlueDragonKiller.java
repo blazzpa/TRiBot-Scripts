@@ -1,47 +1,66 @@
-package org.blazzpa.tribot.bluedragons;
+package scripts.org.blazzpa.tribot.bluedragons;
 
-import org.blazzpa.tribot.bluedragons.actions.Task;
-import org.blazzpa.tribot.bluedragons.actions.impl.*;
-import org.blazzpa.tribot.bluedragons.util.Constants;
-import org.blazzpa.tribot.bluedragons.util.Methods;
-import org.blazzpa.tribot.bluedragons.util.Settings;
 import org.tribot.api2007.Equipment;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
+import org.tribot.script.interfaces.Painting;
+import scripts.org.blazzpa.tribot.bluedragons.actions.Task;
+import scripts.org.blazzpa.tribot.bluedragons.actions.impl.*;
+import scripts.org.blazzpa.tribot.bluedragons.util.Constants;
+import scripts.org.blazzpa.tribot.bluedragons.util.Methods;
+import scripts.org.blazzpa.tribot.bluedragons.util.Paint;
+import scripts.org.blazzpa.tribot.bluedragons.util.Settings;
 
+import java.awt.*;
 import java.util.Arrays;
 
-@ScriptManifest(authors = {"Blazzpa"}, name = "bBlueDragonKiller", category = "Moneymaking", description = "Kills blue" +
-        " dragons using safespots in the Taverly dungeon. Uses the shortcut so you must have at least 70 agility.")
-public class bBlueDragonKiller extends Script {
+@ScriptManifest(authors = {"Blazzpa"}, name = "bBlueDragonKiller", category = "Moneymaking", version = 1.1,
+        description = "Kills blue dragons using safespots in the Taverly dungeon. <br>" +
+                " Uses the shortcut so you must have at least 70 agility.<br>" +
+                "<br><b>Version 1.1:</b>" +
+                "<br><ul>" +
+                "<li>Tidied up code</li>" +
+                "<li>Other random shit</li>" +
+                "</ul><br>")
+public class bBlueDragonKiller extends Script implements Painting {
 
+    public final Constants constants = new Constants();
+    public final Settings settings = new Settings();
+    public final Methods methods = new Methods(this);
+    private final Task[] tasks = new Task[]{new CameraManager(this), new Heal(this), new Bank(this),
+            new Teleport(this), new WalkToBank(this), new ClimbCrumbledWall(this), new EnterDungeon(this),
+            new EnterPipe(this), new WalkToDungeonLadder(this), new WalkToCrumbledWall(this), new Loot(this),
+            new AttackDragon(this)};
+    private final Paint paint = new Paint(this);
     private boolean completedStartup = false;
     private boolean terminate = false;
-
-    private Task[] tasks = new Task[]{new Bank(this), new Teleport(this), new WalkToBank(this),
-            new ClimbCrumbledWall(this), new EnterDungeon(this), new EnterPipe(this), new WalkToDungeonLadder(this),
-            new WalkToCrumbledWall(this)};
-    private Constants constants = new Constants();
-    private Settings settings = new Settings();
-    private Methods methods = new Methods(this);
+    private String status = "Startup";
+    private int bankedBones = 0;
+    private int bankedHides = 0;
+    private long startTime;
 
     @Override
     public void run() {
         while (!terminate) {
             if (!completedStartup) {
+                startTime = System.currentTimeMillis();
                 if (!startupCheck()) {
+                    println("Please start in the bank and have a crossbow, bolts and a antifire shield equipped.");
                     terminate = true;
                 } else {
-                    completedStartup = false;
+                    completedStartup = true;
                 }
             } else {
                 for (Task task : tasks) {
+                    println("Checking task: " + task.getClass().getSimpleName());
                     if (task.validate()) {
+                        status = task.getClass().getSimpleName();
                         task.execute();
                     }
+                    sleep(20, 50);
                 }
             }
         }
@@ -54,25 +73,45 @@ public class bBlueDragonKiller extends Script {
         Arrays.sort(constants.bolts);
         Arrays.sort(constants.shields);
         Arrays.sort(constants.crossbows);
-        return Skills.getCurrentLevel(Skills.SKILLS.AGILITY) >= 70 && constants.faladorBank.contains(Player.getPosition()) &&
-                Arrays.binarySearch(constants.bolts, bolts.getID()) >= 0 && bolts.getStack() >= settings.minimumBoltsAmount &&
-                Arrays.binarySearch(constants.shields, shield.getID()) >= 0 &&
+        return Skills.getCurrentLevel(Skills.SKILLS.AGILITY) >= 70 &&
+                (constants.faladorBank.contains(Player.getPosition()) || methods.isBankingComplete()) &&
+                Arrays.binarySearch(constants.bolts, bolts.getID()) >= 0 && bolts.getStack() >=
+                settings.minimumBoltsAmount && Arrays.binarySearch(constants.shields, shield.getID()) >= 0 &&
                 Arrays.binarySearch(constants.crossbows, crossbow.getID()) >= 0;
     }
 
-    public boolean hasCompletedStartup() {
-        return completedStartup;
+    public String getStatus() {
+        return status;
     }
 
-    public Constants getConstants() {
-        return constants;
+    public void print(Object o) {
+        println(o);
     }
 
-    public Settings getSettings() {
-        return settings;
+    public void addBankedBones(int amount) {
+        bankedBones += amount;
     }
 
-    public Methods getMethods() {
-        return methods;
+    public void addBankedHides(int amount) {
+        bankedHides += amount;
     }
+
+    public int getBankedBones() {
+        return bankedBones;
+    }
+
+    public int getBankedHides() {
+        return bankedHides;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    @Override
+    public void onPaint(Graphics graphics) {
+        paint.onRepaint(graphics);
+    }
+
+
 }
