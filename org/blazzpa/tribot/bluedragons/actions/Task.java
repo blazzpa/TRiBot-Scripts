@@ -14,7 +14,4 @@ public abstract class Task {
 
     public abstract void execute();
 
-    public bBlueDragonKiller getInstance() {
-        return instance;
-    }
 }

@@ -19,13 +19,13 @@ public class Loot extends Task {
     @Override
     public boolean validate() {
         return instance.methods.inDragonArea() && !Inventory.isFull() &&
-                GroundItems.find(instance.constants.loot).length > 0 && !instance.methods.isTeleporting() &&
+                GroundItems.find(instance.settings.selectedLoot).length > 0 && !instance.methods.isTeleporting() &&
                 !instance.methods.isInteractingWithCorrectDragon();
     }
 
     @Override
     public void execute() {
-        final RSGroundItem[] loot = GroundItems.find(instance.constants.loot);
+        final RSGroundItem[] loot = GroundItems.find(instance.settings.selectedLoot);
         if (loot.length > 0) {
             for (final RSGroundItem item : loot) {
                 if (item != null) {

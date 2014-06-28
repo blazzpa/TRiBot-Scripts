@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.ScriptManifest;
 import scripts.org.blazzpa.tribot.bluedragons.bBlueDragonKiller;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Methods {
@@ -116,8 +117,34 @@ public class Methods {
         return t.toString();
     }
 
+    public int calculatePottedRangeLevel() {
+        final int rangeLevel = Skills.getActualLevel(Skills.SKILLS.RANGED);
+        return rangeLevel + 4 + (int) Math.floor(rangeLevel / 10);
+    }
+
     public double getVersion() {
         return instance.getClass().getAnnotation(ScriptManifest.class).version();
+    }
+
+    public int[] getLootIDArray(final ArrayList<String> items) {
+        int[] ids = new int[items.size()];
+        for (int i = 0; i < ids.length; i++) {
+            for (final LootEnum l : LootEnum.values()) {
+                if (l.name().equals(items.get(i))) {
+                    ids[i] = l.getID();
+                }
+            }
+        }
+        return ids;
+    }
+
+    public int getFoodId(final String item) {
+        for (FoodEnum fe : FoodEnum.values()) {
+            if (fe.name().equals(item)) {
+                return fe.getID();
+            }
+        }
+        return -1;
     }
 
 }

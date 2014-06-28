@@ -1,6 +1,7 @@
 package scripts.org.blazzpa.tribot.bluedragons.util;
 
 import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Skills;
 import scripts.org.blazzpa.tribot.bluedragons.bBlueDragonKiller;
 
 import java.awt.*;
@@ -10,8 +11,8 @@ public class Paint {
     private final Font title = new Font("Monotype Corsiva", Font.PLAIN, 25);
     private final Font author = new Font("Monotype Corsiva", Font.PLAIN, 16);
     private final Font info = new Font("Book Antiqua", Font.PLAIN, 15);
-    private final Shape bg = new Rectangle(10, 23, 245, 130);
-    private final Shape border = new Rectangle(8, 21, 245, 134);
+    private final Shape bg = new Rectangle(10, 23, 245, 150);
+    private final Shape border = new Rectangle(8, 21, 245, 154);
     private final Composite bgComposite = makeComposite(0.5F);
     private final Composite borderComposite = makeComposite(1.0F);
     private final bBlueDragonKiller instance;
@@ -49,5 +50,8 @@ public class Paint {
         g2d.drawString("Bones: " + Inventory.getCount(instance.constants.dragonBones), 12, 123);
         g2d.drawString("Banked bones: " + instance.getBankedBones(), 12, 138);
         g2d.drawString("Runtime: " + instance.methods.format(System.currentTimeMillis() - instance.getStartTime()), 12, 153);
+        if (instance.settings.drinkRangingPotion)
+        g2d.drawString("Range level (redose @): " + Skills.getCurrentLevel(Skills.SKILLS.RANGED) + " (" + "" +
+                (Skills.getActualLevel(Skills.SKILLS.RANGED) + instance.settings.redoseAt) + ")", 12, 168);
     }
 }

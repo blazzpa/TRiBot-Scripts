@@ -26,6 +26,13 @@ public class Bank extends Task {
             Banking.depositAll();
             if (Banking.withdraw(1, instance.constants.faladorTeletabID)) {
                 if (Banking.withdraw(instance.settings.minimumFoodCount, instance.settings.selectedFoodID)) {
+                    if (instance.settings.drinkRangingPotion) {
+                        for (final int id : instance.constants.rangingPotions) {
+                            if (Banking.withdraw(1, id)) {
+                                break;
+                            }
+                        }
+                    }
                     if (Banking.close()) {
                         instance.print("Banking successful.");
                     }

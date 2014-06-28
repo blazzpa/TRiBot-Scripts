@@ -18,5 +18,6 @@ public class Constants {
     public final int faladorTeletabID = 8009;
     public final int blueDragon1 = 424;
     public final RSTile[] safespot1 = {new RSTile(2900, 9809, 0), new RSTile(2901, 9809, 0)};
+    public final int[] rangingPotions = {2444, 169, 171, 173};
 
 }
